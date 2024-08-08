@@ -14,6 +14,9 @@ import Task from "./Dashboard/marketdash/Task";
 import View from "./Dashboard/marketdash/View";
 import Apply from "./Dashboard/marketdash/Apply";
 import Notify from "./Dashboard/campdash/Notify";
+import EditMarketer from "./Dashboard/marketdash/EditMarket";
+import Profile from "./Dashboard/Admindasb/Profile";
+import Portfolio from "./Dashboard/marketdash/portfolio";
 
 const App = () => {
   return (
@@ -33,7 +36,9 @@ const App = () => {
         <Route path="/apply" element={   <Apply />}/>
         <Route path="/view" element={   <View />}/>
         <Route path="/notify" element={   <Notify />}/>
-       
+        <Route path="/edit-market" element={   <EditMarketer />}/>
+        <Route path="/profile" element={   <Profile />}/>
+        <Route path="/portfolio" element={<Portfolio />} />
      
         
       </Routes>

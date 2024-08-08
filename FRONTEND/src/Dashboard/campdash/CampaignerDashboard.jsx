@@ -25,6 +25,12 @@ const CampaignerDashboard = () => {
     navigate('/form');
   };
 
+
+  const handleMenuClick = (path) => {
+    setIsOpen(false);
+    navigate(path);
+  };
+
   return (
     <div className="bg-bg min-h-screen ">
       <header className="bg-white text-txtBg p-6 pl-6 flex justify-between items-center shadow-txt">
@@ -37,7 +43,7 @@ const CampaignerDashboard = () => {
        Create Campaigner
       </button>
       <Link to='/case' className="bg-btn  text-txtBg px-4 py-2 rounded" >Case Studies</Link>
-      <div class="relative">
+      <div class="relative cursor-pointer">
                   <span class="absolute left-0 top-0 bg-red-500 text-white rounded-full text-xs px-1">
                     3
                   </span>
@@ -87,9 +93,9 @@ const CampaignerDashboard = () => {
       {isOpen && (
         <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
           <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profile</a>
+            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"  onClick={() => handleMenuClick('/profile')}>EditProfile</a>
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Withdraw</a>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Notifications</a>
+            {/* <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Notifications</a> */}
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Payment History</a>
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Wallet</a>
           </div>
