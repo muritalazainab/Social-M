@@ -9,30 +9,31 @@ const campaignSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  timeframe: {
-    type: Date,
-    required: true,
-  },
   budget: {
     type: Number,
     required: true,
   },
+  timeframe: {
+    type: Date,
+    required: true,
+  },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected', 'completed'],
-    default: 'pending',
+    enum: ['available', 'applied', 'assigned', 'completed'],
+    default: 'available',
   },
   campaigner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User', // Assuming User is the model for both campaigners and marketers
     required: true,
   },
   marketer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  }
+  },
+  application: { type: String } // Optional field for application letters
 });
 
-const Campaign = mongoose.model('Campaign', campaignSchema);
+const Campaign = mongoose.models.Campaign || mongoose.model('Campaign', campaignSchema);
 
 module.exports = Campaign;

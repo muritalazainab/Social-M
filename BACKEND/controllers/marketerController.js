@@ -1,44 +1,43 @@
 const asyncHandler = require('express-async-handler');
-const Marketer = require('../models/marketerModel');
-const Task = require('../models/taskModel'); // Assuming you have a Task model
-const Work = require('../models/workModel'); // Assuming you have a Work model
+const  Marketer = require('../models/marketerModel');
+const  Campaign = require('../models/campaignerModel');
 
-// Get all available tasks
-const getAvailableTasks = asyncHandler(async (req, res) => {
+// Apply for a campaign
+const applyForCampaign = asyncHandler(async (req, res) => {
+  const { campaignId, applicationLetter } = req.body;
   try {
-    const tasks = await Task.find({ status: 'available' });
-    res.status(200).json(tasks);
-  } catch (error) {
-    console.error('Error fetching tasks:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Apply for a task
-const applyForTask = asyncHandler(async (req, res) => {
-  const { taskId, applicationLetter } = req.body;
-  try {
-    const task = await Task.findById(taskId);
-    if (!task || task.status !== 'available') {
-      return res.status(404).json({ message: 'Task not found or not available' });
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign || campaign.status !== 'available') {
+      return res.status(404).json({ message: 'Campaign not found or not available' });
     }
 
-    task.status = 'applied';
-    task.application = applicationLetter;
-    await task.save();
+    campaign.status = 'applied';
+    campaign.application = applicationLetter;
+    await campaign.save();
+
+    // Add campaign to marketer's list
+    const marketer = await Marketer.findById(req.user.id);
+    if (!marketer) {
+      return res.status(404).json({ message: 'Marketer not found' });
+    }
+    if (!marketer.campaigns.includes(campaignId)) {
+      marketer.campaigns.push(campaignId);
+      await marketer.save();
+    }
 
     res.status(200).json({ message: 'Application submitted successfully' });
   } catch (error) {
-    console.error('Error applying for task:', error);
+    console.error('Error applying for campaign:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Get assigned jobs
+// Get assigned jobs for a marketer
 const getAssignedJobs = asyncHandler(async (req, res) => {
+  console.log(req.user);
   try {
-    const marketer = await Marketer.findById(req.user.id).populate('tasks');
-    const assignedJobs = marketer.tasks.filter(task => task.status === 'assigned');
+    const marketer = await Marketer.findById(req.user).populate('campaigns');
+    const assignedJobs = marketer.campaigns.filter(campaign => campaign.status === 'assigned');
     res.status(200).json(assignedJobs);
   } catch (error) {
     console.error('Error fetching assigned jobs:', error);
@@ -46,18 +45,27 @@ const getAssignedJobs = asyncHandler(async (req, res) => {
   }
 });
 
-// Submit work for a task
+// Submit work for a campaign
 const submitWork = asyncHandler(async (req, res) => {
-  const { taskId, workDetails } = req.body;
+  const { campaignId, workDetails } = req.body;
   try {
-    const task = await Task.findById(taskId);
-    if (!task || task.status !== 'assigned') {
-      return res.status(404).json({ message: 'Task not found or not assigned' });
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign || campaign.status !== 'assigned') {
+      return res.status(404).json({ message: 'Campaign not found or not assigned' });
     }
 
-    task.status = 'completed';
-    task.workDetails = workDetails; // Update with work details
-    await task.save();
+    // Save the work details directly into the marketer's document
+    const marketer = await Marketer.findById(req.user.id);
+    if (!marketer) {
+      return res.status(404).json({ message: 'Marketer not found' });
+    }
+    
+    marketer.submittedWork.push({ campaignId, details: workDetails });
+    await marketer.save();
+
+    // Update campaign status to completed
+    campaign.status = 'completed';
+    await campaign.save();
 
     res.status(200).json({ message: 'Work submitted successfully' });
   } catch (error) {
@@ -66,7 +74,7 @@ const submitWork = asyncHandler(async (req, res) => {
   }
 });
 
-// Update profile to include portfolio
+// Update marketer profile and portfolio
 const updateProfile = asyncHandler(async (req, res) => {
   const { name, bio, portfolio } = req.body;
   try {
@@ -77,7 +85,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
     marketer.name = name;
     marketer.bio = bio;
-    marketer.portfolio = portfolio; // Update with portfolio details
+    marketer.portfolio = portfolio;
     await marketer.save();
 
     res.status(200).json({ message: 'Profile updated and portfolio created' });
@@ -88,8 +96,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getAvailableTasks,
-  applyForTask,
+  applyForCampaign,
   getAssignedJobs,
   submitWork,
   updateProfile

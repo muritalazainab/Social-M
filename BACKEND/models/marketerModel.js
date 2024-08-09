@@ -1,27 +1,22 @@
 const mongoose = require('mongoose');
 
-// Define the Task schema
-const taskSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  budget: { type: Number, required: true },
-  deadline: { type: Date, required: true },
-  status: { type: String, enum: ['available', 'applied', 'assigned', 'completed'], default: 'available' },
-  application: { type: String } // Application letter for the task
+const workSchema = new mongoose.Schema({
+  campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', required: true },
+  details: { type: String, required: true },
+  submittedAt: { type: Date, default: Date.now }
 });
 
-// Define the Marketer schema
 const marketerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   profilePicture: { type: String },
   bio: { type: String }, // Express themselves
-  tasks: [taskSchema], // List of tasks available, applied, and assigned
-  submittedWork: [{ 
+  campaigns: [{ 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Work' 
-  }], 
+    ref: 'Campaign' 
+  }], // List of campaigns applied to or assigned
+  submittedWork: [workSchema], // Embedded work details
   portfolio: { 
     title: { type: String },
     description: { type: String },
@@ -33,7 +28,6 @@ const marketerSchema = new mongoose.Schema({
   } // Portfolio details
 });
 
-// Create the Marketer model
-const Marketer = mongoose.model('Marketer', marketerSchema);
+const Marketer = mongoose.models.Marketer || mongoose.model('Marketer', marketerSchema);
 
 module.exports = Marketer;

@@ -1,18 +1,19 @@
 const express = require('express');
 const {
+  
+ 
+  applyForCampaign,
   getAssignedJobs,
-  getAvailableTasks,
-  applyForTask,
   submitWork,
   updateProfile,
 } = require('../controllers/marketerController');
 
 const router = express.Router();
 
-router.get('/assign', getAssignedJobs);
-router.get('/', getAvailableTasks);
+
+router.get('/', getAssignedJobs);
 router.post('/', submitWork);
-router.post('/', applyForTask);
+router.post('/',   applyForCampaign);
 router.put('/', updateProfile);
 
 module.exports = router;
