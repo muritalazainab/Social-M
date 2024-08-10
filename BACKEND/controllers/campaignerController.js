@@ -24,36 +24,39 @@ const Campaign = require('../models/campaignerModel');
 
 // Update a campaign's status
 const updateCampaign = asyncHandler(async (req, res) => {
-  const { campaignId, title, description, budget, timeline, status } = req.body;
+  const campaign = await Campaign.findById(req.params.campaignId);
 
-  try {
-    const campaign = await Campaign.findById(campaignId);
+  if (!campaign) {
+    return res.status(404).json({ error: "Campaign not found" });
+  }
 
-    if (!campaign) {
-    return res.status(404).json({ message: 'Campaign not found' });
+  if (campaign) {
+    const { title, description, budget, timeframe} = campaign;
+
+    // Check if the user is authenticated
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: "User not authenticated" });
     }
 
-    if (campaign.campaigner.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to update this campaign' });
+    // Check if the authenticated user is the campaigner
+    if (campaign.campaigner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Not authorized to update this campaign" });
     }
 
     // Update the campaign details
-    campaign.title = title || campaign.title;
-    campaign.description = description || campaign.description;
-    campaign.budget = budget || campaign.budget;
-    campaign.timeline = timeline || campaign.timeline;
+    campaign.title = req.body.title || title;
+    campaign.description = req.body.description || description;
+    campaign.budget = req.body.budget || budget;
+    campaign.timeframe = req.body.timeframe || timeframe;
 
     // Update status if provided
-    if (status) {
-      campaign.status = status;
+    if (req.body.status) {
+      campaign.status = req.body.status;
     }
 
-    await campaign.save();
+    const updatedCampaign = await campaign.save();
 
-    res.status(200).json({ message: 'Campaign updated successfully', campaign });
-  } catch (error) {
-    console.error('Error updating campaign:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.json(updatedCampaign);
   }
 });
 

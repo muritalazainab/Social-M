@@ -3,7 +3,7 @@ const {
   
  
   applyForCampaign,
-  getAssignedJobs,
+  getAssignedCampaigns,
   submitWork,
   updateProfile,
 } = require('../controllers/marketerController');
@@ -11,7 +11,7 @@ const {
 const router = express.Router();
 
 
-router.get('/', getAssignedJobs);
+router.get('/', getAssignedCampaigns);
 router.post('/', submitWork);
 router.post('/',   applyForCampaign);
 router.put('/', updateProfile);

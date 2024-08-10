@@ -33,17 +33,17 @@ const applyForCampaign = asyncHandler(async (req, res) => {
 });
 
 // Get assigned jobs for a marketer
-const getAssignedJobs = asyncHandler(async (req, res) => {
-  console.log(req.user);
-  try {
-    const marketer = await Marketer.findById(req.user).populate('campaigns');
-    const assignedJobs = marketer.campaigns.filter(campaign => campaign.status === 'assigned');
-    res.status(200).json(assignedJobs);
-  } catch (error) {
-    console.error('Error fetching assigned jobs:', error);
-    res.status(500).json({ message: 'Server error' });
+
+const getAssignedCampaigns = asyncHandler(async (req, res) => {
+  const campaigns = await Campaign.find({ marketer: req.user.id, status: 'in-progress' });
+
+  if (!campaigns) {
+      return res.status(404).json({ message: 'No assigned campaigns found' });
   }
+
+  res.status(200).json(campaigns);
 });
+
 
 // Submit work for a campaign
 const submitWork = asyncHandler(async (req, res) => {
@@ -97,7 +97,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 module.exports = {
   applyForCampaign,
-  getAssignedJobs,
+  getAssignedCampaigns,
   submitWork,
   updateProfile
 };
