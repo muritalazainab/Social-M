@@ -1,61 +1,64 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCampaigns } from './CampaignContext';
 
 const CreateCamp = () => {
-  const [selectedOption, setSelectedOption] = useState('');
+  const { addCampaign } = useCampaigns();
   const [formData, setFormData] = useState({
-    marketerType: '',
-    urgency: '',
-    details: '',
+    title: '',
+    deadline: '',
+    description: '',
     budget: '',
-    splitTask: 'no'
   });
-  const [walletFunded, setWalletFunded] = useState(true); // Assuming wallet is funded for now
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
   const navigate = useNavigate();
 
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-    setFormData({ ...formData, splitTask: event.target.value });
-  };
-
   const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.id]: event.target.value });
+    const { name, value } = event.target; 
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!walletFunded && parseFloat(formData.budget) > 0) {
-      setError('Please fund your wallet to proceed.');
+
+    if (parseFloat(formData.budget) <= 0) {
+      setError('Budget must be greater than zero.');
       return;
     }
-    // Proceed with form submission logic
+
     setError('');
-    
+
     try {
-      const response = await fetch('/api/campaigns', {
+      const response = await fetch('http://localhost:3500/campaigns', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        credentials: 'include',
       });
 
-      if (response.ok) {
-        const campaign = await response.json();
-        console.log('Campaign created:', campaign);
-        // Show success message
-        setSuccess(true);
-        // Redirect to campaigner dashboard after a delay
-        setTimeout(() => {
-          navigate('/campaigner-dashboard');
-        }, 2000); // Redirect after 2 seconds
-      } else {
-        console.error('Failed to create campaign');
+      if (!response.ok) {
+        throw new Error('Failed to create campaign');
       }
+
+      const newCampaign = await response.json();
+      addCampaign(newCampaign);  // Add new campaign to context
+      setSuccess(true);
+      setFormData({ title: '', deadline: '', description: '', budget: '' });
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        navigate('/camp');
+      }, 1000);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error.message);
+      setError(error.message);
     }
   };
 
@@ -63,85 +66,62 @@ const CreateCamp = () => {
     <div className="flex justify-center items-center h-screen">
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="marketerType">
-            Which kind of Marketer are you looking for?
+          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="title">
+            Title
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-txtBg leading-tight focus:outline-none focus:shadow-outline"
-            id="marketerType"
+            id="title"
+            name="title"
             type="text"
             placeholder="e.g Digital marketing"
-            value={formData.marketerType}
+            value={formData.title}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="mb-6">
-          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="urgency">
-            How urgent is your campaign?
+          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="deadline">
+            Deadline
           </label>
           <input
-            className="shadow appearance-none border border-border rounded w-full py-2 px-3 text-txtBg mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="urgency"
-            type="text"
-            placeholder="2weeks"
-            value={formData.urgency}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-txtBg leading-tight focus:outline-none focus:shadow-outline"
+            id="deadline"
+            name="deadline"
+            type="date"
+            value={formData.deadline}
             onChange={handleChange}
+            required
           />
-          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="details">
-            Tell us more about your campaign
+        </div>
+        <div className="mb-4">
+          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="description">
+            Description
           </label>
           <textarea
             className="shadow appearance-none border rounded w-full py-2 px-3 text-txtBg leading-tight focus:outline-none focus:shadow-outline"
-            id="details"
-            placeholder="Write your message here..."
+            id="description"
+            name="description"
             rows="4"
-            value={formData.details}
+            value={formData.description}
             onChange={handleChange}
-          ></textarea>
+            required
+          />
+        </div>
+        <div className="mb-4">
           <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="budget">
-            What is your Budget?
+            Budget
           </label>
           <input
-            className="shadow appearance-none border border-border rounded w-full py-2 px-3 text-txtBg mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-txtBg leading-tight focus:outline-none focus:shadow-outline"
             id="budget"
-            type="text"
-            placeholder="$40"
+            name="budget"
+            type="number"
+            placeholder="40"
             value={formData.budget}
             onChange={handleChange}
+            required
           />
-          <label className="block text-txtBg text-sm font-bold mb-2" htmlFor="splitTask">
-            Do you want this to be a split task
-          </label>
-          <div className="mb-4">
-            <div className="flex items-center mb-2">
-              <input
-                className="mr-2 leading-tight"
-                type="radio"
-                id="yes"
-                name="splitTask"
-                value="yes"
-                checked={selectedOption === 'yes'}
-                onChange={handleOptionChange}
-              />
-              <label className="text-gray-700" htmlFor="yes">
-                Yes
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                className="mr-2 leading-tight"
-                type="radio"
-                id="no"
-                name="splitTask"
-                value="no"
-                checked={selectedOption === 'no'}
-                onChange={handleOptionChange}
-              />
-              <label className="text-gray-700" htmlFor="no">
-                No
-              </label>
-            </div>
-          </div>
         </div>
         {error && <p className="text-red-500 text-xs italic">{error}</p>}
         {success && <p className="text-green-500 text-xs italic">Campaign created successfully! Redirecting to dashboard...</p>}
@@ -149,6 +129,7 @@ const CreateCamp = () => {
           <button
             className="bg-btn hover:bg-btn text-txtBg font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
+            onClick={() => navigate('/camp')}
           >
             Cancel
           </button>

@@ -13,27 +13,59 @@ const campaignSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  timeframe: {
+  deadline: {
     type: Date,
+    required: true,
+  },
+  walletBalance: {
+     type: Number,
+      default: 0 }, 
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Campaigner',
     required: true,
   },
   status: {
     type: String,
-    enum: ['available', 'applied', 'assigned', 'completed'],
-    default: 'available',
+    enum: ['open', 'assigned', 'submitted', 'completed'],
+    default: 'open',
   },
-  campaigner: {
+  applications: [{
+    marketerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Marketer',
+      required: true,
+    },
+    portfolioLink: {
+      type: String,
+      required: true,
+    },
+    coverLetter: {
+      type: String,
+      required: true,
+    },
+  }],
+  assignedMarketer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming User is the model for both campaigners and marketers
-    required: true,
+    ref: 'Marketer',
   },
-  marketer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  submittedWork: {
+    marketerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Marketer',
+    },
+    workDetails: {
+      type: String,
+    },
   },
-  application: { type: String } // Optional field for application letters
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const Campaign = mongoose.models.Campaign || mongoose.model('Campaign', campaignSchema);
-
-module.exports = Campaign;
+module.exports = mongoose.model('Campaign', campaignSchema);

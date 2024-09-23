@@ -18,18 +18,10 @@ const Home = () => {
           </div>
           <div className="links flex  items-center text-center ">
             <nav className="flex gap-10 mr-20">
-              <a className="text-sm " href="#">
-                Home
-              </a>
-              <a className="text-sm " href="#">
-                Case study
-              </a>
-              <a className="text-sm" href="#">
-                About
-              </a>
-              <a className="text-sm" href="#">
-                Contact
-              </a>
+            <Link className="text-sm" to="/">Home</Link>
+        <Link className="text-sm" to="/case">Case Study</Link>
+        {/* <Link className="text-sm" to="/about">About</Link> */}
+        <Link className="text-sm" to="/contact">Contact</Link>
             </nav>
           </div>
             <button className="head rounded-2xl	text-center	cursor-pointer my-5	 border-2	px-10 py-px flex	border-btn 	">
@@ -37,7 +29,7 @@ const Home = () => {
             </button>
         </div>
       </header>
-      <div className="herosection flex pt-14 px-10 mb-10  text-txtBg  bg-bg justify-between	 gap-6	">
+      <div className="herosection flex pt-28 px-10  text-txtBg   justify-between	 gap-6	">
         <div className="hero-text w-2/4	 ">
           <h1 className="text-5xl font-medium ">
             Get more <span className="text-btn">paying</span> customers.
@@ -66,11 +58,38 @@ const Home = () => {
           <img
             src="Gen Z (1).gif"
             alt=""
-            className=" h-10/12 object-cover rounded-lg mb-20"
+            className=" h-10/12 object-cover rounded-lg mb-20  ml-auto"
           />
         </div>
       </div>
-      <section className="section pt-14 pl-8 bg-color bg mb-10  text-txtBg w-full px-14  ">
+      <section className=" text-txtBg p-8  bg-bg rounded-tr-[100px] relative mb-10">
+  <div className="flex flex-col lg:flex-row gap-8">
+    <div className="lg:w-1/2 flex flex-col justify-center text-txtBg">
+      <h2 className="text-lg font-semibold">We strive to make our clients happy</h2>
+      <h3 className="text-4xl font-bold mb-4">So, let's be happy together</h3>
+      <p className="text-lg mb-6">
+        Bridge the awareness and knowledge gap between your prospective customers and you.
+        In the simplest, most creative ways possible.
+      </p>
+      <button className="bg-btn py-1 w-4/12 rounded-full shadow-md ">
+  Meet Our Clients
+
+</button>
+
+    </div>
+
+    {/* Image Section */}
+    <div className="lg:w-1/2">
+      <img
+        src="meeting.png"
+        alt="Client Working"
+        className="rounded-3xl object-cover w-3/4 h-80 ml-auto"
+      />
+    </div>
+  </div>
+</section>
+
+      {/* <section className="section pt-14 pl-8  text-txtBg w-full px-14  ">
         <div className="grid-txt flex">
           <div className="sec-txt w-2/4 ">
             <h1 className="text-xl font-medium ">What we do?</h1>
@@ -141,114 +160,111 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
-      <section className="second-sec pt-14 pl-8 mb-10 bg-bg  text-txtBg">
-        <div className="section-two  p-4 flex gap-8">
-          <div className="card   shadow-md rounded-lg p-4  w-2/4">
-            <img
-              src="mrr.jpg"
-              alt="Card Image"
-              className="w-2/4 h-full object-cover rounded-t-lg"
-            />
-          </div>
-          <div className="col-span-2   grid-cols-2 w-2/4 flex flex-col gap-4  ">
-            <div className="card w-11/12  shadow-md rounded-lg    gap-3 p-4 flex">
-              <img
-                src="hm.jpg"
-                alt="Card Image"
-                className="w-2/4 h-48 object-cover rounded-t-lg"
-              />
-              <div className="card-content  p-4">
-                <h5 className="text-lg font-bold mb-2">HM community launch </h5>
-                <p className=" mb-8">
-                  Educating a new market segment was indeed a challenging task
-                  ...
-                </p>
-                <button className=" bg-btn mb-8 w-8/12 rounded-md	text-center	cursor-pointer	 text-white px-6 py-2">
-                  Case Study
-                </button>
-              </div>
-            </div>
-            <div className="card w-11/12 flex gap-3	   shadow-md rounded-lg p-4 ">
-              <img
-                src="secondhm.jpg"
-                alt="Card Image"
-                className="w-2/4 h-48 object-cover rounded-t-lg"
-              />
-              <div className="card-content p-4">
-                <h5 className="text-lg font-bold mb-2">HM community launch </h5>
-                <p className=" mb-8">
-                  Educating a new market segment was indeed a challenging task
-                  ...
-                </p>
-                <button className=" bg-btn mb-8 w-8/12 rounded-md text-center	cursor-pointer		 text-white px-6 py-2">
-                  Case Study
-                </button>
-              </div>
-            </div>
-          </div>
+      </section> */}
+      <section className="services-sec pt-14 pl-8 mb-10  text-txtBg">
+  <div className="section-services p-4 flex flex-col  gap-10">
+    <header className="text-center">
+      <h2 className="text-4xl font-bold mb-6">Our Services</h2>
+      <p className="text-lg max-w-2xl mx-auto">
+        Discover how we can help you achieve your marketing goals with our wide range of services designed to make your campaigns successful.
+      </p>
+    </header>
+
+    <div className="services-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="service-card shadow-md rounded-lg p-6 text-center">
+        <img
+          src="card1.jpg"
+          alt="Service 1"
+          className="w-24 h-24 mx-auto mb-4 object-cover rounded-full"
+        />
+        <h5 className="text-lg font-bold mb-2">Campaign Management</h5>
+        <p className="mb-4">
+          Our expert team will help you plan, execute, and manage marketing campaigns that drive results.
+        </p>
+        <button className="bg-btn text-white px-6 py-2 rounded-md cursor-pointer">
+          Learn More
+        </button>
+      </div>
+
+      <div className="service-card shadow-md rounded-lg p-6 text-center">
+        <img
+          src="card2.jpg"
+          alt="Service 2"
+          className="w-24 h-24 mx-auto mb-4 object-cover rounded-full"
+        />
+        <h5 className="text-lg font-bold mb-2">Content Creation</h5>
+        <p className="mb-4">
+          Engage your audience with high-quality content tailored to your brand and message.
+        </p>
+        <button className="bg-btn text-white px-6 py-2 rounded-md cursor-pointer">
+          Learn More
+        </button>
+      </div>
+
+      <div className="service-card shadow-md rounded-lg p-6 text-center">
+        <img
+          src="card 3.jpg"
+          alt="Service 3"
+          className="w-24 h-24 mx-auto mb-4 object-cover rounded-full"
+        />
+        <h5 className="text-lg font-bold mb-2">Social Media Marketing</h5>
+        <p className="mb-4">
+          Maximize your online presence with targeted social media campaigns that build your brand.
+        </p>
+        <button className="bg-btn text-white px-6 py-2 rounded-md cursor-pointer">
+          Learn More
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<section className=" py-14 bg-bg px-8">
+      {/* First Section */}
+      <div className="flex flex-col lg:flex-row gap-8 mb-10">
+        {/* Text Content */}
+        <div className="lg:w-1/2 flex flex-col justify-center">
+          <h2 className="text-lg text-gray-500 font-semibold">Rise to the top</h2>
+          <h3 className="text-4xl font-bold text-gray-800">Increase Sales</h3>
+          <p className="text-gray-600 mt-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris tristique 
+            imperdiet erat non rhoncus. Suspendisse potenti.
+          </p>
         </div>
-      </section>
-      <div className="bg-color">
-        <header className="mb-4">
-          <h2 className="text-4xl font-bold text-center">Let's Talk</h2>
-        </header>
-        <div className="contact mx-auto p-4 pt-6 md:p-6 lg:p-12 flex flex-wrap">
-          <div className="w-full md:w-1/2 xl:w-1/2 p-4">
-            <img src="Contact us.gif" class="w-full h-auto" alt="Image" />
-          </div>
-          <div className="w-full md:w-1/2 xl:w-1/2 p-4">
-            <form>
-              <div className="mb-4">
-                <label className="block w-full py-2 text-xl" for="name">
-                  Firstname
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  class=" block w-3/4 p-3 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block w-full py-2 text-xl" for="name">
-                  Lastname
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  class=" block w-3/4 p-3 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block w-full py-2 text-xl" for="name">
-                  Email
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  class=" block w-3/4 p-3 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block w-full py-2 text-xl" for="name">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows="4"
-                  class="mt-1 block w-full p-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-                ></textarea>
-              </div>
-              <button className=" bg-btn  w-4/12 rounded-md text-center	cursor-pointer		 text-white px-6 py-2">
-                Submit
-              </button>
-            </form>
-          </div>
+        {/* Image Content */}
+        <div className="lg:w-1/2">
+          <img
+            src="Businessman-rafiki.png"
+            alt="Office"
+            className="rounded-3xl object-cover w-3/4  h-80 ml-auto"
+          />
         </div>
       </div>
 
-      <div className="learnmore flex pt-28 px-10 mb-10  text-txtBg  bg-bg	 gap-4	">
+      {/* Second Section */}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Text Content */}
+        <div className="lg:w-1/2 flex flex-col justify-center">
+          <h2 className="text-lg text-gray-500 font-semibold">Count on us</h2>
+          <h3 className="text-4xl font-bold text-gray-800">The Experts</h3>
+          <p className="text-gray-600 mt-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris tristique 
+            imperdiet erat non rhoncus. Suspendisse potenti.
+          </p>
+        </div>
+        {/* Image Content */}
+        <div className="lg:w-1/2">
+          <img
+            src="Coworking-bro.png"
+            alt="Office Team"
+            className="rounded-3xl object-cover w-3/4 h-80 ml-auto"
+          />
+        </div>
+      </div>
+    </section>
+
+
+
+      <div className="learnmore flex pt-28 px-10 mb-10  text-txtBg  	 gap-4	">
         <div className="hero-image w-2/4 ">
           <img
             src="aboutus.png"
@@ -281,8 +297,97 @@ const Home = () => {
           </p>
         </div>
       </div>
+  
+    <footer className="bg-custom-gradient text-txtBg py-10">
+      {/* Top Section with grid layout */}
+      <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        {/* About Section */}
+        <div>
+          <h5 className="text-2xl font-bold mb-4">Social Marketing</h5>
+          <p className="text-base">
+            Bridge the awareness and knowledge gap between your prospective
+            customers and you. In the simplest, most creative ways possible.
+          </p>
+        </div>
 
-      <footer className=" py-8 pt-14 pl-8  px-4 bg-custom-gradient text-txtBg">
+        {/* Useful Links */}
+        <div>
+          <h5 className="text-xl font-semibold mb-4">Useful Links</h5>
+          <ul className="space-y-2">
+            <li>
+              <a href="#" className="hover:underline">
+                FAQ
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Privacy Policy
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Contact Info */}
+        <div>
+          <h5 className="text-xl font-semibold mb-4">Contact Us</h5>
+          <ul className="space-y-2">
+            <li>
+              <a href="mailto:info@socialM.com" className="hover:underline">
+                info@socialM.com
+              </a>
+            </li>
+            <li>
+              <p>
+                +234 814 915 2164 <br />
+                4B Emma Abimbola Cole Road, Eti-Osa, Lagos
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        {/* Social Media Links */}
+        <div>
+          <h5 className="text-xl font-semibold mb-4">Follow Us</h5>
+          <ul className="flex space-x-6 text-2xl">
+            <li>
+              <a href="#" className="hover:text-gray-700">
+                <FaInstagram />
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-gray-700">
+                <FaFacebook />
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-gray-700">
+              <FaSquareXTwitter />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Divider Line */}
+      <div className="border-t border-txtBg mt-10"></div>
+
+      {/* Bottom Section */}
+      <div className="container mx-auto px-6 py-6 text-center">
+        <p className="text-sm">
+          &copy; 2024 Social Marketing. All Rights Reserved.
+        </p>
+      </div>
+    </footer>
+
+
+
+
+      {/* <footer className=" py-8 pt-14 pl-8  px-4 bg-custom-gradient text-txtBg">
         <div className="foooter flex justify-between gap-4">
           <div className="ml-5">
             <h5 className="text-3xl font-bold mb-2 ">Social marketing</h5>
@@ -355,7 +460,7 @@ const Home = () => {
             Copyright 2024 Social marketing. All Rights Reserved.
           </p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };

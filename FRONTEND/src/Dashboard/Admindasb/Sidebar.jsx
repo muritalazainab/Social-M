@@ -3,7 +3,7 @@ import React from 'react'
 const Sidebar = () => {
   return (
     <div>
-       <aside class="w-full md:w-64  text-white h-screen bg-white">
+       <aside class="w-full md:w-64  text-white h-screen bg-white border-l border-black">
             <div class="p-6">
                 <h1 class="text-2xl font-semibold mb-6 text-txtBg">Social Marketing</h1>
                 <ul>

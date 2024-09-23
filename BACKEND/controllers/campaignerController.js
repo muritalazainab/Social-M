@@ -1,116 +1,167 @@
 const asyncHandler = require('express-async-handler');
 const Campaign = require('../models/campaignerModel');
-
+const User = require("../models/userModel")
 // Create a campaign
-    const createCampaign = asyncHandler(async (req, res) => {
-      const { title, description, timeframe, budget, campaigner } = req.body;
-      const campaign = new Campaign({ 
-        title, 
-        description, 
-        timeframe,
-         budget, 
-         status:"available",
-         campaigner });
-    
-      try {
-        const savedCampaign = await campaign.save();
-        res.status(201).json({ message: 'Campaign created successfully', campaign: savedCampaign });
-      } catch (error) {
-        console.error('Error creating campaign', error);
-        res.status(500).json({ message: 'Server error' });
-      }
+const createCampaign = asyncHandler(async (req, res) => {
+    const { title, description, budget, deadline } = req.body;
+
+
+
+    if (!req.user || !req.user._id) {
+        res.status(400);
+        throw new Error('User not found');
+    }
+
+    // Check if all required fields are provided
+    if (!title || !description || !budget || !deadline) {
+        return res.status(400).json({ message: 'Please fill all the required fields' });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    // // Check if the user has sufficient funds in their wallet
+    // if (user.balance < budget) {
+    //     return res.status(400).json({ message: 'Insufficient funds. Please fund your wallet before creating a campaign.' });
+    // }
+
+    // Create the campaign
+    const campaign = await Campaign.create({
+        title,
+        description,
+        budget,
+        deadline,
+        createdBy: req.user._id,
+        status: 'open',
     });
- 
+
+    // Check if the campaign was successfully created
+    if (!campaign) {
+        return res.status(500).json({ message: 'Failed to create campaign' });
+    }
+
+    // Deduct the budget from the user's wallet balance
+    user.balance -= budget;
+    await user.save();
+
+    res.status(201).json(campaign);
+});
+
+
 
 // Update a campaign's status
 const updateCampaign = asyncHandler(async (req, res) => {
-  const campaign = await Campaign.findById(req.params.campaignId);
+    const campaign = await Campaign.findById(req.params.id);
 
-  if (!campaign) {
-    return res.status(404).json({ error: "Campaign not found" });
-  }
-
-  if (campaign) {
-    const { title, description, budget, timeframe} = campaign;
-
-    // Check if the user is authenticated
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ error: "User not authenticated" });
+    if (!campaign) {
+        res.status(404).json({ message: 'Campaign not found' });
+        return;
     }
 
-    // Check if the authenticated user is the campaigner
-    if (campaign.campaigner.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: "Not authorized to update this campaign" });
+    if (campaign.status !== 'open') {
+        res.status(400).json({ message: 'Campaign cannot be edited after being assigned' });
+        return;
     }
 
-    // Update the campaign details
-    campaign.title = req.body.title || title;
-    campaign.description = req.body.description || description;
-    campaign.budget = req.body.budget || budget;
-    campaign.timeframe = req.body.timeframe || timeframe;
-
-    // Update status if provided
-    if (req.body.status) {
-      campaign.status = req.body.status;
-    }
+    campaign.title = req.body.title || campaign.title;
+    campaign.description = req.body.description || campaign.description;
+    campaign.budget = req.body.budget || campaign.budget;
+    campaign.deadline = req.body.deadline || campaign.deadline;
 
     const updatedCampaign = await campaign.save();
 
     res.json(updatedCampaign);
-  }
 });
-
 
 const deleteCampaign = asyncHandler(async (req, res) => {
-  const { campaignId } = req.body;
+  const campaign = await Campaign.findById(req.params.id);
 
-  try {
-    const campaign = await Campaign.findById(campaignId);
-
-    if (!campaign) {
-      return res.status(404).json({ message: 'Campaign not found' });
-    }
-
-    if (campaign.campaigner.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to delete this campaign' });
-    }
-
-    if (campaign.status === 'assigned') {
-      return res.status(400).json({ message: 'Cannot delete an assigned campaign' });
-    }
-
-    await campaign.remove();
-
-    res.status(200).json({ message: 'Campaign deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting campaign:', error);
-    res.status(500).json({ message: 'Server error' });
+  if (!campaign) {
+      res.status(404).json({ message: 'Campaign not found' });
+      return;
   }
-});
 
+  if (campaign.status !== 'open') {
+      res.status(400).json({ message: 'Campaign cannot be deleted after being assigned' });
+      return;
+  }
+
+  await campaign.remove();
+  res.json({ message: 'Campaign deleted successfully' });
+});
 
 // Get all available campaigns
-const getAvailableCampaigns = asyncHandler(async (req, res) => {
-  try {
-    const campaigns = await Campaign.find({ status: 'available' });
-    res.status(200).json(campaigns);
-  } catch (error) {
-    console.error('Error fetching campaigns:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
+const ApplyForCampaign = asyncHandler(async (req, res) => {
+  const campaign = await Campaign.findById(req.params.id);
+
+    if (!campaign || campaign.status !== 'open') {
+        res.status(404).json({ message: 'Campaign not found or not open for applications' });
+        return;
+    }
+
+    const alreadyApplied = campaign.applications.find(app => app.marketerId.toString() === req.user._id.toString());
+
+    if (alreadyApplied) {
+        res.status(400).json({ message: 'You have already applied for this campaign' });
+        return;
+    }
+
+    console.log(req.user._id, "i am here")
+
+    const application = {
+        marketerId: req.user._id,
+        portfolioLink: req.body.portfolioLink,
+        coverLetter: req.body.coverLetter,
+    };
+
+    campaign.applications.push(application);
+    await campaign.save();
+
+    res.status(201).json({ message: 'Application submitted successfully' });
 });
 
-// Get campaigns by status
-const getCampaignsByStatus = asyncHandler(async (req, res) => {
-  const { status } = req.query;
+const selectMarketer = asyncHandler(async (req, res) => {
+  const campaign = await Campaign.findById(req.params.id);
 
-  try {
-    const campaigns = await Campaign.find({ campaigner: req.user.id, status });
-    res.status(200).json(campaigns);
-  } catch (error) {
-    console.error('Error fetching campaigns by status:', error);
-    res.status(500).json({ message: 'Server error' });
+  if (!campaign || campaign.status !== 'open') {
+      res.status(404).json({ message: 'Campaign not found or not open for assignment' });
+      return;
   }
+
+  const selectedMarketer = campaign.applications.find(app => app.marketerId.toString() === req.body.marketerId);
+
+  if (!selectedMarketer) {
+      res.status(400).json({ message: 'Marketer not found in applications' });
+      return;
+  }
+
+  campaign.assignedMarketer = req.body.marketerId;
+  campaign.status = 'assigned'; // Change status to 'assigned'
+  await campaign.save();
+
+  res.json({ message: 'Marketer selected successfully' });
+
+})
+
+const submitWork = asyncHandler(async (req, res) => {
+  const campaign = await Campaign.findById(req.params.id);
+
+  if (!campaign || campaign.status !== 'assigned') {
+      res.status(404).json({ message: 'Campaign not found or not assigned to you' });
+      return;
+  }
+
+  campaign.submittedWork = {
+      marketerId: req.user.id,
+      workDetails: req.body.workDetails
+  };
+  campaign.status = 'submitted'; // Change status to 'submitted'
+  await campaign.save();
+
+  res.json({ message: 'Work submitted successfully' });
 });
 
 
@@ -118,6 +169,7 @@ module.exports = {
   createCampaign,
   updateCampaign,
   deleteCampaign,
-  getAvailableCampaigns,
-  getCampaignsByStatus
+  ApplyForCampaign,
+  selectMarketer,
+  submitWork
 };

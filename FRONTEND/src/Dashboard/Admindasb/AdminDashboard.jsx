@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Profile from "./Profile";
 import { FaRegUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { setIsLoggedInContext } from "../../App";
+import Swal from 'sweetalert2';
+import '@sweetalert2/theme-dark/dark.css'; 
+
+
 // import { useUser } from './UserContext';
 
 const AdminDashboard = () => {
+  const setIsLoggedIn= useContext(setIsLoggedInContext)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobs, setJobs] = useState([
     {
@@ -14,7 +22,7 @@ const AdminDashboard = () => {
       status: "Pending",
     },
   ]);
-
+const navigate = useNavigate()
   const handleAcceptJob = (index) => {
     const updatedJobs = [...jobs];
     updatedJobs[index].status = "Accepted";
@@ -34,17 +42,41 @@ const AdminDashboard = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  // const { user } = useUser();
-
-  // if (!user) {
-  //   return <div>Please sign up or log in</div>;
-  // }
+const handleLogout = async ()=>{
+  try {
+    const response = await axios.post("http://localhost:3500/users/logout",{withCredentials:true})
+    
+    if (response.status === 200) {
+      setIsLoggedIn(false)
+      Swal.fire({
+        icon: 'success',
+        title: 'Logged out successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      })
+      console.log("User Logout successfully");
+      navigate("/")
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Logout failed!',
+      text: 'Please check your credentials.',})
+    if (err.response && err.response.status === 400) {
+      window.alert("Err logging out.");
+    } else {
+      console.log(error);
+    }
+    
+  }
+ 
+}
 
   return (
     <div className="bg">
       <body class=" font-sans leading-normal bg-">
         <div class="flex flex-col md:flex-row">
-          <aside class="w-full md:w-64  text-white h-screen bg-white">
+          <aside class="w-full md:w-64  text-white h-screen bg-white border-r">
             <div class="p-6">
               <h1 class="text-3xl font-semibold mb-6 text-txtBg border-b border-border p-4">
                 Social Marketing
@@ -55,7 +87,7 @@ const AdminDashboard = () => {
                     href="#"
                     class="block text-2xl font-semibold py-2 px-4 rounded text-txtBg hover:bg-color active:bg-color focus:outline-none focus:ring focus:ring-color"
                   >
-                    <Link to="/dacash">Dashboard</Link>
+                    <Link to="/dash">Dashboard</Link>
                   </a>
                 </li>
                 <li class="mb-4">
@@ -110,7 +142,7 @@ const AdminDashboard = () => {
           <main class="flex-1 bg- p-6 h-screen">
             <header class="flex items-center mb-6 justify-end">
               <div class="flex items-center space-x-4">
-                <div class="relative">
+                {/* <div class="relative">
                   <span class="absolute left-0 top-0 bg-red-500 text-white rounded-full text-xs px-1">
                     3
                   </span>
@@ -128,7 +160,13 @@ const AdminDashboard = () => {
                       d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118.155 15H17v-2a2.006 2.006 0 00-.268-1.003L15 11.072V7a5.992 5.992 0 00-5-5.917V1a1 1 0 00-2 0v.083A5.992 5.992 0 003 7v4.072l-1.732 1.925A2.006 2.006 0 001 15v2h1.155a2.032 2.032 0 01-1.44 1.595L3 17h5m2 4a1 1 0 002 0m-6 0h8"
                     ></path>
                   </svg>
-                </div>
+                </div> */}
+
+                <button className="bg-btn mt-4 rounded-sm	 text-white p-2"
+                
+                onClick={handleLogout}
+                >Logout</button>
+
               </div>
             </header>
             <div className=" flex bg-white p-6">

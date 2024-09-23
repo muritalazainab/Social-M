@@ -4,22 +4,7 @@ import { Link } from "react-router-dom";
 const About = () => {
   return (
     <div className=' bg-bg  text-txtBg '>
-        <header className="relative bg-bg  text-txtBg  shadow-md shadow-txt ">
-  <div className="about  p-2 flex justify-between items-center  	">
-    <div className="logo">
-      <h1 className="text-3xl font-bold pl-8 text-txtBg flex gap-1 items-center"><PiMetaLogoThin />Social M</h1>
-    </div>
-     <div className="links flex  items-center text-center ">
-    <nav className="flex gap-10 mr-20">
-    <a className="text-sm " href="#">Home</a>
-    <a className="text-sm " href="#">Case study</a>
-    <a className="text-sm" href="#">About</a>
-      <a className="text-sm" href="#">Contact</a>
-    </nav>
-    <button className='head rounded-2xl	text-center	cursor-pointer	 border-2	px-10 py-px flex	border-btn 	mr-auto	'>Login</button>
-    </div> 
-  </div>
-</header>
+ 
 
 <div className='learnmore flex pt-28 px-10 mb-10  text-txtBg  bg-bg justify-between	 gap-6	'>
 <div className="hero-image ">

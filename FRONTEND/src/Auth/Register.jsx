@@ -1,178 +1,165 @@
-// import React from 'react'
-// import { Link } from 'react-router-dom'
-// import {  useCallback, useContext, useEffect, useState } from 'react';
+
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from 'sweetalert2';
+import '@sweetalert2/theme-dark/dark.css'; 
 
 
-// const Register = () => {
-//   const [Fullname, setFullname] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [description , setDescription] = useState('');
-//   const [profilePicture, setProfilePicture] = useState(null);
-  
-
-//   return (
-//     <div className='mx-auto p-4 pt-6   flex gap-8'>
-//         <div className="w-full md:w-1/2 xl:w-1/2 p-4">
-//     <img src="Sign up-pana (1).png" class="w-full h-auto" alt="Image"/>
-//   </div>
-
-//     <div class="ml-20">
-          
-//           <form action="#">
-            
-//           <h2 class="text-3xl font-bold mb-6 text-btn justify-center flex text-center	">Sign up</h2>
-       
-   
-//               <div class="mb-4">
-//                   <label for="email" class="block  font-medium  text-txtBg">Fullname</label>
-//                   <input type="text" id="name" name="name" class="mt-1 block  w-full p-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"    value={Fullname}
-//             onChange={(e) => setName(e.target.value)}
-//             required placeholder="Fullname"/>
-//               </div>
-//               <div class="mb-4">
-//                   <label for="email" class="block text-sm font-medium text-txtBg">Email</label>
-//                   <input   value={email}
-//             onChange={(e) => setEmail(e.target.value)} type="email" id="email" name="email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border" placeholder="Your Email"/>
-//               </div>
-//               <div class="mb-4">
-//                   <label for="email" class="block text-sm font-medium text-txtBg">Password</label>
-//                   <input    value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             required type="password" id="password" name="password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border" placeholder="Password"/>
-//               </div>
-          
-//               <div class="mb-4">
-//                   <label for="profile-picture" class="block text-sm font-medium text-txtBg">Profile Picture</label>
-//                   <input  value={profilePicture} onChange={(e) => setProfilePicture(e.target.files[0])}
-            
-//             required type="file" id="profile-picture" name="profile-picture" class="mt-1 block w-full p-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"/>
-//               </div>
-//          <div class="mb-4">
-//            <label for="marketingBudget" class="block text-sm font-medium text-txtBg">Description of your profession</label>
-//            <textarea   value={description}
-//             onChange={(e) => setDescription(e.target.value)} name="bio" id="bio" rows="3" className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-inborder focus:border-inborder sm:text-sm"></textarea>
-    
-//               </div>
-//               <button type="submit" class="w-full bg-btn text-white py-2 px-4 rounded-md shadow-lg  focus:outline-none focus:ring-2 focus:ring-border focus:ring-offset-2"><Link to='register'>Sign up </Link></button>
-//           </form>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Register
-
-
-
-
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const [Fullname, setFullname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [description, setDescription] = useState('');
-  const [profilePicture, setProfilePicture] = useState(null);
-  
+
+  const [fullname, setFullname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Simulate form validation
-    if (!Fullname || !email || !password || !description || !profilePicture) {
-      alert('Please fill all fields');
-      return;
-    }
-
-    // Simulate an API call
+    
     try {
-      // Here you can replace the below code with an actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Navigate to the dashboard upon successful registration
-      navigate('/dashboard');
+      const result = await axios.post("http://localhost:3500/users/register", {
+        fullname,
+        email,
+        password,
+        role,
+      }, { 
+        withCredentials: true // Ensure cookies are included in the request
+      });
+    
+      Swal.fire({
+        icon: 'success',
+        title: 'Registered successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    
+      if (result.status === 201) {
+        
+        if (role === "marketer") {
+          navigate("/market");
+        } else if (role === "campaigner") {
+          navigate("/camp");
+        }
+      }
     } catch (error) {
-      console.error('Error registering user:', error);
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error registering user',
+        text: error.response?.data?.message || 'Something went wrong',
+      });
     }
+    
   };
 
   return (
-    <div className='mx-auto p-4 pt-6 flex gap-8'>
-      <div className="w-full md:w-1/2 xl:w-1/2 p-4">
-        <img src="Sign up-pana (1).png" className="w-full h-auto" alt="Image"/>
-      </div>
+    
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+   <div className="flex w-3/5 shadow-lg rounded-lg">
+  
+        <div className="w-1/2 bg-gradient-to-r from-red-500 to-orange-500 text-white p-10 rounded-l-lg flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-bold mb-4">Welcome Back!</h1>
+          <p className="text-lg mb-8"> Already have an account? login with your personal information.</p>
+          <button
+            className="bg-white text-red-500 px-8 py-2 rounded-full font-semibold hover:bg-gray-100 transition duration-300"
+            onClick={() => navigate('/login')}
+          >
+            Login
+          </button>
+        </div>
+     
+ 
+      <div className="w-1/2 bg-white p-10 rounded-r-lg flex flex-col justify-center">
+        {/* <h2 className="text-3xl font-bold text-gray-700 mb-6">Create Account</h2> */}
 
       <div className="ml-20">
         <form onSubmit={handleSubmit}>
-          <h2 className="text-3xl font-bold mb-6 text-btn justify-center flex text-center">Sign up</h2>
+          <h2 className="text-3xl font-bold mb-6 text-btn flex justify-center text-center">
+            Sign up
+          </h2>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Fullname</label>
+              <input
+                type="text"
+                onChange={(e) => setFullname(e.target.value)}
+                value={fullname}
+
+                className=" mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Password"
+                required
+              />
+            </div>
+
+          
 
           <div className="mb-4">
-            <label htmlFor="name" className="block font-medium text-txtBg">Fullname</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-              value={Fullname}
-              onChange={(e) => setFullname(e.target.value)}
-              required
-              placeholder="Fullname"
-            />
+            <label className="block text-sm font-medium text-txtBg">Role</label>
+            <div className="flex items-center">
+              <label className="mr-4">
+                <input
+                  type="radio"
+                  name="role"
+                  value="marketer"
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                />
+                <span className="ml-2">Marketer</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="campaigner"
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                />
+                <span className="ml-2">Campaigner</span>
+              </label>
+            </div>
           </div>
-
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-txtBg">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Your Email"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-txtBg">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Password"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="profile-picture" className="block text-sm font-medium text-txtBg">Profile Picture</label>
-            <input
-              type="file"
-              id="profile-picture"
-              name="profile-picture"
-              className="mt-1 block w-full p-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-border"
-              onChange={(e) => setProfilePicture(e.target.files[0])}
-              required
-            />
-          </div>
-
 
           <button
             type="submit"
-            className="w-full bg-btn text-white py-2 px-4 rounded-md shadow-lg focus:outline-none focus:ring-2 focus:ring-border focus:ring-offset-2"
+            className="mt-4 w-full bg-btn text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-border"
           >
-            Sign up
+            Sign Up
           </button>
+
+          <p className="mt-4 text-center">
+            {/* Already have an account? <Link to="/login" className="text-btn">Login</Link> */}
+          </p>
         </form>
       </div>
     </div>
+    </div>
+    
+    </div>
+
   );
 };
 
