@@ -17,9 +17,9 @@ const Login = () => {
       }, {
         withCredentials: true 
       });
-    
+
       if (result.status === 200) {
-        const userRole = result.data.role; 
+        const userRole = result.data.user?.role; 
         // Redirect based on user role
         if (userRole === 'marketer') {
           navigate('/market');
@@ -27,12 +27,18 @@ const Login = () => {
           navigate('/camp');
         }
       }
+      const loggedUser = result.data.user
+      const token = result.data?.token
+      localStorage.setItem("user-socialM", JSON.stringify(loggedUser));
+      localStorage.setItem("token", token);
     } catch (err) {
       if (err.response && err.response.status === 400) {
         window.alert('Invalid email or password. Please try again.');
       } else {
         console.log(err);
       }
+      console.error(err);
+      
     }
     
   };

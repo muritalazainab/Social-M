@@ -8,14 +8,7 @@ const job = [
     budget: '$1000',
     timeframe: '1 month',
   },
-  {
-    id: 2,
-    title: 'Campaign Title 2',
-    description: 'Description of the campaign 2',
-    requirements: 'Requirements for campaign 2',
-    budget: '$2000',
-    timeframe: '2 months',
-  },
+
   // 
 ];
 

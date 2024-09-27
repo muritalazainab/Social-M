@@ -6,26 +6,18 @@ import { Link } from "react-router-dom";
 const ContactUs = () => {
   return (
     <div>
-    <header className="relative bg-custom-gradient  text-txtBg  shadow-md   ">
-        <div className="w-full  p-2 flex justify-between items-center 	">
-          <div className="logo">
-            <h1 className="text-3xl font-bold pl-8 text-txtBg flex gap-1 items-center">
-              <PiMetaLogoThin />
-              Social M
-            </h1>
-          </div>
-          <div className="links flex  items-center text-center ">
-            <nav className="flex gap-10 mr-20">
-            <Link className="text-sm" to="/">Home</Link>
-        <Link className="text-sm" to="/case">Case Study</Link>
-        {/* <Link className="text-sm" to="/about">About</Link> */}
+    <header className="flex justify-between items-center p-6 bg-white shadow-lg">
+      <div className="logo pl-26 ">
+             <h1 className="text-3xl font-bold pl-8 text-txtBg flex gap-1 items-center">
+               <PiMetaLogoThin />
+               Social M
+             </h1>
+      </div>
+        <nav className="space-x-6"> <Link className="text-sm" to="/">Home</Link>         <Link className="text-sm" to="/case">Case Study</Link>
+   {/* <Link className="text-sm" to="/about">About</Link> */}
         <Link className="text-sm" to="/contact">Contact</Link>
-            </nav>
-          </div>
-            <button className="head rounded-2xl	text-center	cursor-pointer my-5	 border-2	px-10 py-px flex	border-btn 	">
-              <Link to="/login">Login</Link>
-            </button>
-        </div>
+          <button className="px-4 py-2 bg-[#FFCC29] text-white rounded-md hover:bg-yellow-500">   <Link to="/login">Login</Link></button>
+        </nav>
       </header>
       <div className=" mt-16">
   <header className="mb-4">

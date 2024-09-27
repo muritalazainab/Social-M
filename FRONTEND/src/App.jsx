@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import "./index.css";
+// import "./index.css";
 import axios from "axios"
 import {  Navigate, Route, Routes } from 'react-router-dom';
 import Home from './Homepage/Home'; 
@@ -21,6 +21,7 @@ import StripeWrapper from "../Stripe/StripeWrapper"
 import PaymentResult from "../Stripe/PaymentResult";
 import ContactUs from "./Homepage/ContactUs";
 import { CampaignProvider } from "./Dashboard/campdash/CampaignContext";
+import PaymentForm from "../Stripe/PaymentForm";
 
 
 export const isLoggedInContext = createContext();
@@ -70,6 +71,7 @@ const App = () => {
             <Route path="/edit-market" element={<EditMarketer />} />
             <Route path="/profile" element={<Profile />} />
            <Route path="/wrapper" element={<StripeWrapper />} />
+           <Route path="/deposit-funds" element={<PaymentForm />} />
            <Route path="/payment-result" element={<PaymentResult />} />
           </Routes>
         </setIsLoggedInContext.Provider>

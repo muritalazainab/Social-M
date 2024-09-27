@@ -13,6 +13,7 @@ export const CampaignProvider = ({ children }) => {
     const fetchCampaigns = async () => {
       const response = await fetch('http://localhost:3500/campaigns');
       const data = await response.json();
+      console.log(data)
       setCampaigns(data);
     };
 
