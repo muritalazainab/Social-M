@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Campaign = require('../models/campaignerModel');
-const Payment = require('../models/paymentModel');
+const Payment = require('../models/transactionModel');
 
 const getDashboardData = asyncHandler(async (req, res) => {
   try {

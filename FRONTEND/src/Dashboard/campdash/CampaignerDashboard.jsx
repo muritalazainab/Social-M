@@ -247,7 +247,7 @@ const CampaignerDashboard = () => {  // { user }
                           {campaign.status}
                         </span>
                       </td>
-                      <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
+                      {/* <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
                         <button
                           className="text-indigo-600 hover:text-indigo-900 mr-4 transition duration-300 ease-in-out"
                           onClick={() => handleEditCampaign(campaign._id)}
@@ -260,7 +260,7 @@ const CampaignerDashboard = () => {  // { user }
                         >
                           Delete
                         </button>
-                      </td>
+                      </td> */}
                     </tr>
 
                     {/* List of Marketers who applied for the campaign */}

@@ -31,6 +31,10 @@ const campaignSchema = new mongoose.Schema({
     default: 'open',
   },
   applications: [{
+    name:{
+      type: String,
+      required: true,
+    },
     marketerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Marketer',

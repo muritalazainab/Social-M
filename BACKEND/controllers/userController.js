@@ -5,7 +5,7 @@ const generateToken = require("../utils/index");
 
 const register = asyncHandler(async (req, res) => {
   try {
-    const { fullname, email, password,role } = req.body;
+    const { fullname, email, password, role } = req.body;
     // Check if user already exists
     const userExists = await User.findOne({ email });
 
@@ -15,12 +15,11 @@ const register = asyncHandler(async (req, res) => {
         throw new Error("Email already exists");
       })();
 
-
     const user = await User.create({
       fullname,
       email,
       password,
-      role
+      role,
     });
     const token = generateToken(user._id);
     //   send http-only cookie
@@ -51,14 +50,13 @@ const register = asyncHandler(async (req, res) => {
   }
 });
 
-
 const login = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Find user by email
     const user = await User.findOne({ email });
-    console.log(user)
+    console.log(user);
     if (user && (await bcrypt.compare(password, user.password))) {
       // Generate token
       const token = generateToken(user._id);
@@ -72,19 +70,19 @@ const login = asyncHandler(async (req, res) => {
         secure: true,
       });
 
-      // Send user data including role and token
-      res.status(200).json({
-        _id: user._id,
-        email: user.email,
-        role: user.role, // Include the role in the response
+      const loggedUser = {
+        user: user,
         token: token,
-      });
+      };
+
+      // Send user data including role and token
+      res.status(200).json(loggedUser);
     } else {
-      res.status(400).json({ message: 'Invalid email or password' });
+      res.status(400).json({ message: "Invalid email or password" });
     }
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 });
 const getUser = asyncHandler(async (req, res) => {
@@ -94,14 +92,9 @@ const getUser = asyncHandler(async (req, res) => {
     const user = await User.findById(userId);
 
     if (user) {
-      const { _id, fullname, email, role } = user;
+      // const { _id, fullname, email, role } = user;
 
-      res.status(200).json({
-        _id,
-        fullname,
-        email,
-        role,
-      });
+      res.status(200).json({ user });
     } else {
       res.status(404).json({ message: "user not found" });
     }
@@ -123,31 +116,29 @@ const getUsers = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
-
-
 const updateUser = asyncHandler(async (req, res) => {
-  const userId = req.params.userId
-  const {role} = req.body
-  
+  const userId = req.params.userId;
+  const { role } = req.body;
+
   try {
     const user = await Admin.findById(userId);
 
     if (!user) {
-      return res.status(404).json({msg: "user not found"});
+      return res.status(404).json({ msg: "user not found" });
     }
 
     user.role = role;
 
     await user.save();
 
-    res.status(200).json(user)
+    res.status(200).json(user);
   } catch (error) {
     console.error("error updating admin:", error);
-    res.status(500).json({msg: "Internal server error"})
+    res.status(500).json({ msg: "Internal server error" });
   }
 });
 
-const logoutUser = asyncHandler(async(req, res)=> {
+const logoutUser = asyncHandler(async (req, res) => {
   res.cookie("token", "", {
     path: "/",
     httpOnly: true,
@@ -156,19 +147,19 @@ const logoutUser = asyncHandler(async(req, res)=> {
     secure: true,
   });
 
-  return res.status(200).json({message: "logout Successful"});
-})
+  return res.status(200).json({ message: "logout Successful" });
+});
 
 // Delete an admin
 
-const deleteUser= asyncHandler(async (req, res) => {
+const deleteUser = asyncHandler(async (req, res) => {
   try {
     const { userId } = req.params;
     const user = User.findById(userId);
     if (!user) {
       res.status(404);
       throw new Error("user not found");
-    }    
+    }
 
     await user.deleteOne();
     res.status(200).json({
@@ -180,7 +171,6 @@ const deleteUser= asyncHandler(async (req, res) => {
   }
 });
 
-
 module.exports = {
   register,
   login,
@@ -188,5 +178,5 @@ module.exports = {
   deleteUser,
   getUsers,
   updateUser,
-  logoutUser
+  logoutUser,
 };
